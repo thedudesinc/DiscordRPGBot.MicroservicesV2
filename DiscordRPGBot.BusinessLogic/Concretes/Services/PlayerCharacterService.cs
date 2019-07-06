@@ -31,7 +31,6 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
 
         public async Task<long> CreateAsync(PlayerCharacterCreateRequest pc)
         {
-            bool createdUser = false;
             var user = await _userRepository.GetByDiscordIdAsync(pc.DiscordId);
 
             if (user == null)
@@ -44,8 +43,6 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                 });
 
                 user = await _userRepository.GetAsync(userId);
-
-                createdUser = true;
             }
 
             var newCharacter = new PlayerCharacter
@@ -64,11 +61,8 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
             };
 
             var id = await _playerCharacterRepository.CreateAsync(newCharacter);
-
-            if (createdUser)
-            {
-                await _userRepository.AddCharacterToUserAsync(user.Id, newCharacter);
-            }
+            
+            await _userRepository.AddCharacterToUserAsync(user.Id, newCharacter);
 
             return id;
         }

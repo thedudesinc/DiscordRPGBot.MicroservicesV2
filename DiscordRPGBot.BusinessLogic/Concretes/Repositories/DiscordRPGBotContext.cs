@@ -54,7 +54,7 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         Name = "Fighter",
                         Description = "Melee build. Can only use STR weapons.",
                         ImageUrl = "https://i.imgur.com/Bcv0Y2s.png",
-                        StrongMod = 2,
+                        StrongMod = 4,
                         FastMod = 1,
                         SmartMod = 1,
                         ToughMod = 4,
