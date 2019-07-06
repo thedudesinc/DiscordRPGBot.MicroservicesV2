@@ -60,7 +60,16 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
 
         public async Task<Class> GetByNameAsync(string name)
         {
-            return await Task.FromResult(_context.Classes.Where(p => p.Name.ToLower() == name.Trim().ToLower()).FirstOrDefault());
+            var @class = await Task.FromResult(_context.Classes.Where(p => p.Name.ToLower() == name.Trim().ToLower()).FirstOrDefault());
+
+            if (@class != null)
+            {
+                return @class;
+            }
+            else
+            {
+                throw new Exception("A class with that name does not exist!");
+            }
         }
 
         public async Task UpdateAsync(long id, Class @class)

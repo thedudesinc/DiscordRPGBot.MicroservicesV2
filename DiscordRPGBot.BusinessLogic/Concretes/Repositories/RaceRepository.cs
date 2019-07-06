@@ -60,7 +60,16 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
 
         public async Task<Race> GetByNameAsync(string name)
         {
-            return await Task.FromResult(_context.Races.Where(p => p.Name.ToLower() == name.Trim().ToLower()).FirstOrDefault());
+            var race = await Task.FromResult(_context.Races.Where(p => p.Name.ToLower() == name.Trim().ToLower()).FirstOrDefault());
+
+            if (race != null)
+            {
+                return race;
+            }
+            else
+            {
+                throw new Exception("A race with that name does not exist!");
+            }
         }
 
         public async Task UpdateAsync(long id, Race race)
