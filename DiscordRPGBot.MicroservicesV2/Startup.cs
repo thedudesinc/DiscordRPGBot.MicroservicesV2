@@ -38,7 +38,13 @@ namespace DiscordRPGBot.MicroservicesV2
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            // DI - Repositories
             services.AddTransient<IPlayerCharacterRepository, PlayerCharacterRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IClassRepository, ClassRepository>();
+            services.AddTransient<IRaceRepository, RaceRepository>();
+
+            // DI - Services
             services.AddTransient<IPlayerCharacterService, PlayerCharacterService>();
         }
 

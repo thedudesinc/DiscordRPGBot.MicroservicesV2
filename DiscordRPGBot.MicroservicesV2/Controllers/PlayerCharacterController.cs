@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using DiscordRPGBot.BusinessLogic.Abstractions.Services;
 using DiscordRPGBot.BusinessLogic.Entities;
+using DiscordRPGBot.BusinessLogic.Models.Request;
+using DiscordRPGBot.BusinessLogic.Models.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiscordRPGBot.MicroservicesV2.Controllers
@@ -23,20 +26,34 @@ namespace DiscordRPGBot.MicroservicesV2.Controllers
         //    //implement TODO: get all playercharacters
         //}
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PlayerCharacter>> Get(long id)
+        [HttpGet("{discordId}")]
+        public async Task<ActionResult<PlayerCharacterGetResponse>> Get(string discordId)
         {
-            var pc = await _service.GetAsync(id);
+            try
+            {
+                var pcSummary = await _service.GetAsync(discordId);
 
-            return Ok(pc);
+                return Ok(pcSummary);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<long>> Post([FromBody] PlayerCharacter playerCharacter)
+        public async Task<ActionResult<long>> Post([FromBody] PlayerCharacterCreateRequest playerCharacter)
         {
-            var id = await _service.CreateAsync(playerCharacter);
+            try
+            {
+                var id = await _service.CreateAsync(playerCharacter);
 
-            return Ok(id);
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPut("{id}")]

@@ -1,6 +1,7 @@
 ﻿using DiscordRPGBot.BusinessLogic.Abstractions.Repositories;
 using DiscordRPGBot.BusinessLogic.Entities;
 using DiscordRPGBot.BusinessLogic.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
         public PlayerCharacterRepository(DiscordRPGBotContext context)
         {
             _context = context;
+            _context.Database.EnsureCreated();
         }
 
         public async Task<long> CreateAsync(PlayerCharacter pc)
@@ -35,18 +37,29 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
 
         public async Task<bool> DeleteAsync(long id)
         {
-            var removedEntity = await GetAsync(id);
+            var entityToRemove = await GetAsync(id);
 
-            _context.PlayerCharacters.Remove(removedEntity);
+            if (entityToRemove != null)
+            {
+                _context.PlayerCharacters.Remove(entityToRemove);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<PlayerCharacter> GetAsync(long id)
         {
-            return await _context.PlayerCharacters.FindAsync(id);
+            return await Task.FromResult(_context.PlayerCharacters
+                .Include(p => p.Race)
+                .Include(p => p.Class)
+                .Include(p => p.User)
+                .Where(pc => pc.Id == id).FirstOrDefault());
         }
 
         public async Task<IEnumerable<PlayerCharacter>> GetAsync(IEnumerable<long> ids)
