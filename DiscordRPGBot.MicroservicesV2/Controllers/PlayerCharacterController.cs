@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DiscordRPGBot.BusinessLogic.Abstractions.Services;
 using DiscordRPGBot.BusinessLogic.Entities;
@@ -20,12 +21,6 @@ namespace DiscordRPGBot.MicroservicesV2.Controllers
             _service = service;
         }
 
-        //[HttpGet]
-        //public ActionResult<IEnumerable<PlayerCharacter>> Get()
-        //{
-        //    //implement TODO: get all playercharacters
-        //}
-
         [HttpGet("{discordId}")]
         public async Task<ActionResult<PlayerCharacterGetResponse>> Get(string discordId)
         {
@@ -34,6 +29,36 @@ namespace DiscordRPGBot.MicroservicesV2.Controllers
                 var pcSummary = await _service.GetAsync(discordId);
 
                 return Ok(pcSummary);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("GetAllByDiscordId/{discordId}")]
+        public async Task<ActionResult<IEnumerable<PlayerCharacterGetResponse>>> GetAllByDiscordId(string discordId)
+        {
+            try
+            {
+                var pcs = await _service.GetAllByDiscordId(discordId);
+
+                return Ok(pcs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("SetActiveCharacterByOrderedName/{discordId}/{orderId}")]
+        public async Task<ActionResult<PlayerCharacterGetResponse>> SetActiveCharacterByOrderedName(string discordId, int orderId)
+        {
+            try
+            {
+                var success = await _service.SetActiveCharacterByOrderedName(discordId, orderId);
+
+                return Ok(success);
             }
             catch (Exception ex)
             {

@@ -150,8 +150,30 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
         {
             return await Task.FromResult(_context.Users
                 .Include(u => u.Characters)
+                   .ThenInclude(characters => characters.Race)
+                .Include(u => u.Characters)
+                    .ThenInclude(characters => characters.Class)
                 .Where(p => p.DiscordId.ToLower() == discordId.Trim().ToLower())
                 .FirstOrDefault());
+        }
+
+        public async Task<IEnumerable<PlayerCharacter>> GetPlayerCharactersByDiscordIdAsync(string discordId)
+        {
+            var user = await Task.FromResult(_context.Users
+                .Include(u => u.Characters)
+                   .ThenInclude(characters => characters.Race)
+                .Include(u => u.Characters)
+                    .ThenInclude(characters => characters.Class)
+                .Where(p => p.DiscordId.ToLower() == discordId.Trim().ToLower()).FirstOrDefault());
+
+            if (user != null)
+            {
+                return user.Characters.OrderBy(c => c.Name);
+            }
+            else
+            {
+                throw new Exception("No user found with that Discord ID!");
+            }
         }
 
         public async Task UpdateAsync(long id, User user)

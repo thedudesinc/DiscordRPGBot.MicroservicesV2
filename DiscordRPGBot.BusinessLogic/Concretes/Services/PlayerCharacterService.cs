@@ -5,6 +5,7 @@ using DiscordRPGBot.BusinessLogic.Models.Request;
 using DiscordRPGBot.BusinessLogic.Models.Response;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DiscordRPGBot.BusinessLogic.Concretes.Services
@@ -98,11 +99,11 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                     Gold = pc.Gold,
                     MaxHP = pc.MaxHP,
                     ProfileImageUrl = pc.ProfileImageUrl,
+                    ClassImageUrl = pc.Class.ImageUrl,
                     TotalFastMod = pc.Race.FastMod + pc.Class.FastMod,
                     TotalSmartMod = pc.Race.SmartMod + pc.Class.SmartMod,
                     TotalStrongMod = pc.Race.StrongMod + pc.Class.StrongMod,
-                    TotalToughMod = pc.Race.ToughMod + pc.Class.ToughMod,
-                    ClassThumbnail = pc.Class.ImageUrl
+                    TotalToughMod = pc.Race.ToughMod + pc.Class.ToughMod
                 };
 
                 return pcSummary;
@@ -112,6 +113,45 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                 throw new Exception("User does not have an active character!");
             }
         }
+
+        public async Task<IEnumerable<PlayerCharacterGetResponse>> GetAllByDiscordId(string discordId)
+        {
+            List<PlayerCharacterGetResponse> returnedPcs = new List<PlayerCharacterGetResponse>();
+            var pcs = await _userRepository.GetPlayerCharactersByDiscordIdAsync(discordId);
+
+            if (pcs != null)
+            {
+                foreach (var pc in pcs)
+                {
+                    var pcSummary = new PlayerCharacterGetResponse
+                    {
+                        Name = pc.Name,
+                        Race = pc.Race.Name,
+                        Class = pc.Class.Name,
+                        CurrentHP = pc.CurrentHP,
+                        CurrentLevel = pc.CurrentLevel,
+                        CurrentXP = pc.CurrentXP,
+                        Gold = pc.Gold,
+                        MaxHP = pc.MaxHP,
+                        ProfileImageUrl = pc.ProfileImageUrl,
+                        ClassImageUrl = pc.Class.ImageUrl,
+                        TotalFastMod = pc.Race.FastMod + pc.Class.FastMod,
+                        TotalSmartMod = pc.Race.SmartMod + pc.Class.SmartMod,
+                        TotalStrongMod = pc.Race.StrongMod + pc.Class.StrongMod,
+                        TotalToughMod = pc.Race.ToughMod + pc.Class.ToughMod
+                    };
+
+                    returnedPcs.Add(pcSummary);
+                }
+
+                return returnedPcs;
+            }
+            else
+            {
+                throw new Exception("No characters found for this Discord ID!");
+            }
+        }
+
 
         public async Task<IEnumerable<PlayerCharacterGetResponse>> GetAsync(IEnumerable<long> ids)
         {
@@ -134,6 +174,7 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                         Gold = pc.Gold,
                         MaxHP = pc.MaxHP,
                         ProfileImageUrl = pc.ProfileImageUrl,
+                        ClassImageUrl = pc.Class.ImageUrl,
                         TotalFastMod = pc.Race.FastMod + pc.Class.FastMod,
                         TotalSmartMod = pc.Race.SmartMod + pc.Class.SmartMod,
                         TotalStrongMod = pc.Race.StrongMod + pc.Class.StrongMod,
@@ -154,6 +195,58 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
         public async Task UpdateAsync(long id, PlayerCharacter pc)
         {
             await _playerCharacterRepository.UpdateAsync(id, pc);
+        }
+
+        public async Task<PlayerCharacterGetResponse> SetActiveCharacterByOrderedName(string discordId, int orderId)
+        {
+            var user = await _userRepository.GetByDiscordIdAsync(discordId);
+
+            if (user != null)
+            {
+                if (user.Characters != null && user.Characters.Count() > 0)
+                {
+                    var charactersOrdered = user.Characters.OrderBy(c => c.Name).ToArray();
+
+                    if (charactersOrdered.ElementAtOrDefault(orderId - 1) != null)
+                    {
+                        var pc = charactersOrdered[orderId - 1];
+
+                        await _userRepository.SetActiveCharacterAsync(user.Id, pc.Id);
+
+                        var pcSummary = new PlayerCharacterGetResponse
+                        {
+                            Name = pc.Name,
+                            Race = pc.Race.Name,
+                            Class = pc.Class.Name,
+                            CurrentHP = pc.CurrentHP,
+                            CurrentLevel = pc.CurrentLevel,
+                            CurrentXP = pc.CurrentXP,
+                            Gold = pc.Gold,
+                            MaxHP = pc.MaxHP,
+                            ProfileImageUrl = pc.ProfileImageUrl,
+                            ClassImageUrl = pc.Class.ImageUrl,
+                            TotalFastMod = pc.Race.FastMod + pc.Class.FastMod,
+                            TotalSmartMod = pc.Race.SmartMod + pc.Class.SmartMod,
+                            TotalStrongMod = pc.Race.StrongMod + pc.Class.StrongMod,
+                            TotalToughMod = pc.Race.ToughMod + pc.Class.ToughMod
+                        };
+
+                        return pcSummary;
+                    }
+                    else
+                    {
+                        throw new Exception("The number you chose for your active character does not exist!");
+                    }
+                }
+                else
+                {
+                    throw new Exception("No characters found for this Discord ID!");
+                }
+            }
+            else
+            {
+                throw new Exception("No user found with the given Discord ID!");
+            }
         }
     }
 }
