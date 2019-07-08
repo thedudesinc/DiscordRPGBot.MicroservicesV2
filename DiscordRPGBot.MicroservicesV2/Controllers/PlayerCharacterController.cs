@@ -81,6 +81,21 @@ namespace DiscordRPGBot.MicroservicesV2.Controllers
             }
         }
 
+        [HttpPost("SetCharacterImage")]
+        public async Task<ActionResult> SetCharacterImage([FromBody] PlayerCharacterSetImageRequest request)
+        {
+            try
+            {
+                await _service.SetCharacterProfileImageAsync(request.DiscordId, request.ImageUrl);
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {

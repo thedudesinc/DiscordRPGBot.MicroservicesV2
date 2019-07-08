@@ -248,5 +248,30 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                 throw new Exception("No user found with the given Discord ID!");
             }
         }
+
+        public async Task SetCharacterProfileImageAsync(string discordId, string imageUrl)
+        {
+            var user = await _userRepository.GetByDiscordIdAsync(discordId);
+
+            if (user != null)
+            {
+                if (user.Characters != null && user.Characters.Count() > 0 && user.ActiveCharacter != null)
+                {
+                    var pc = await _playerCharacterRepository.GetAsync(user.ActiveCharacter.Value);
+
+                    pc.ProfileImageUrl = imageUrl;
+
+                    await _playerCharacterRepository.UpdateAsync(pc.Id, pc);
+                }
+                else
+                {
+                    throw new Exception("No characters found for this Discord ID!");
+                }
+            }
+            else
+            {
+                throw new Exception("No user found with the given Discord ID!");
+            }
+        }
     }
 }

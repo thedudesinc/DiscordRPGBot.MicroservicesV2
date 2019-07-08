@@ -69,7 +69,9 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
 
         public async Task UpdateAsync(long id, PlayerCharacter pc)
         {
-            await Task.FromResult(_context.PlayerCharacters.Update(pc));
+            _context.PlayerCharacters.Update(pc);
+
+            await _context.SaveChangesAsync();
         }
     }
 }
