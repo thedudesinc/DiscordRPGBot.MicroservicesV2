@@ -19,7 +19,6 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public int CurrentHP { get; set; }
         public int MaxHP { get; set; }
         public long Gold { get; set; }
-        public DateTimeOffset? SpecialAbilityLastUsed { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public DateTimeOffset UpdatedOn { get; set; }
         public long ClassId { get; set; }

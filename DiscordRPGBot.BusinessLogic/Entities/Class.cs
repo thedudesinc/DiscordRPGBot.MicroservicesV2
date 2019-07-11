@@ -17,11 +17,9 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public int SmartMod { get; set; }
         public int ToughMod { get; set; }
         public string ImageUrl { get; set; }
-        public DateTimeOffset CreatedOn { get; set; }
-        public DateTimeOffset UpdatedOn { get; set; }
         [ForeignKey("SpecialAbilityId")]
         public virtual SpecialAbility SpecialAbility { get; set; }
         public virtual ICollection<PlayerCharacter> PlayerCharacters { get; set; }
-
+        public virtual ICollection<ClassAction> Actions { get; set; }
     }
 }

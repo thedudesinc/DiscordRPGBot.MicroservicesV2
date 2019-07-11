@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DiscordRPGBot.BusinessLogic.Models.Request
+﻿namespace DiscordRPGBot.BusinessLogic.Models.Request
 {
     public class PlayerCharacterSetImageRequest
     {

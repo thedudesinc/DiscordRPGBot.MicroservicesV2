@@ -17,8 +17,7 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public int SmartMod { get; set; }
         public int ToughMod { get; set; }
         public string ImageUrl { get; set; }
-        public DateTimeOffset CreatedOn { get; set; }
-        public DateTimeOffset UpdatedOn { get; set; }
         public virtual ICollection<PlayerCharacter> PlayerCharacters { get; set; }
+        public virtual ICollection<RaceAction> Actions { get; set; }
     }
 }

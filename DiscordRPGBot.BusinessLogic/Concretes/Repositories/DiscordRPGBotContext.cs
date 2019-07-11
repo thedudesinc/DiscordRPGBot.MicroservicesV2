@@ -16,6 +16,11 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
         public DbSet<Race> Races { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Entities.Action> Actions { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Monster> Monsters { get; set; }
+        public DbSet<Battle> Battles { get; set; }
+        public DbSet<BattleLog> BattlesLogs { get; set; }
         public DbSet<SpecialAbility> SpecialAbilities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,7 +44,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired();
-                entity.Property(e => e.SpecialAbilityLastUsed).IsRequired(false);
                 entity.HasOne(pc => pc.Class).WithMany(c => c.PlayerCharacters).HasForeignKey(pc => pc.ClassId);
                 entity.HasOne(pc => pc.Race).WithMany(c => c.PlayerCharacters).HasForeignKey(pc => pc.RaceId);
             });
@@ -57,9 +61,7 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         StrongMod = 4,
                         FastMod = 1,
                         SmartMod = 1,
-                        ToughMod = 4,
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
+                        ToughMod = 4
                     },
                     new Class
                     {
@@ -70,9 +72,7 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         StrongMod = 1,
                         FastMod = 4,
                         SmartMod = 4,
-                        ToughMod = 1,
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
+                        ToughMod = 1
                     },
                     new Class
                     {
@@ -83,9 +83,7 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         StrongMod = 3,
                         FastMod = 3,
                         SmartMod = 2,
-                        ToughMod = 2,
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
+                        ToughMod = 2
                     },
                     new Class
                     {
@@ -96,9 +94,7 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         StrongMod = 1,
                         FastMod = 2,
                         SmartMod = 6,
-                        ToughMod = 1,
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
+                        ToughMod = 1
                     },
                 });
             });
@@ -118,8 +114,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         SmartMod = 1,
                         ToughMod = 1,
                         ImageUrl = "http://www.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg",
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
                     },
                     new Race
                     {
@@ -131,8 +125,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         SmartMod = 2,
                         ToughMod = 0,
                         ImageUrl = "http://www.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg",
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
                     },
                     new Race
                     {
@@ -144,8 +136,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         SmartMod = 0,
                         ToughMod = 4,
                         ImageUrl = "http://www.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg",
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
                     },
                     new Race
                     {
@@ -157,8 +147,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         SmartMod = 0,
                         ToughMod = 0,
                         ImageUrl = "http://www.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg",
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
                     },
                     new Race
                     {
@@ -170,8 +158,6 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                         SmartMod = 0,
                         ToughMod = 0,
                         ImageUrl = "http://www.quickmeme.com/img/a8/a8022006b463b5ed9be5a62f1bdbac43b4f3dbd5c6b3bb44707fe5f5e26635b0.jpg",
-                        CreatedOn = DateTimeOffset.Now,
-                        UpdatedOn = DateTimeOffset.Now
                     }
                 });
             });
@@ -185,14 +171,60 @@ namespace DiscordRPGBot.BusinessLogic.Repositories
                 entity.Property(e => e.Type).IsRequired();
             });
 
-            modelBuilder.Entity<Inventory>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.ItemId).IsRequired();
-                entity.Property(e => e.PlayerCharacterId).IsRequired();
-                entity.HasOne(i => i.PlayerCharacter).WithMany(p => p.Items).HasForeignKey(i => i.PlayerCharacterId);
-                entity.HasOne(i => i.Item).WithMany(it => it.PlayerCharacters).HasForeignKey(i => i.ItemId);
-            });
+            modelBuilder.Entity<Inventory>()
+                .HasKey(bc => new { bc.PlayerCharacterId, bc.ItemId });
+            modelBuilder.Entity<Inventory>()
+                .HasOne(bc => bc.PlayerCharacter)
+                .WithMany(b => b.Items)
+                .HasForeignKey(bc => bc.PlayerCharacterId);
+            modelBuilder.Entity<Inventory>()
+                .HasOne(bc => bc.Item)
+                .WithMany(c => c.PlayerCharacters)
+                .HasForeignKey(bc => bc.ItemId);
+
+            modelBuilder.Entity<ClassAction>()
+                .HasKey(bc => new { bc.ClassId, bc.ActionId });
+            modelBuilder.Entity<ClassAction>()
+                .HasOne(bc => bc.Class)
+                .WithMany(b => b.Actions)
+                .HasForeignKey(bc => bc.ClassId);
+            modelBuilder.Entity<ClassAction>()
+                .HasOne(bc => bc.Action)
+                .WithMany(c => c.Classes)
+                .HasForeignKey(bc => bc.ActionId);
+
+            modelBuilder.Entity<ItemAction>()
+                .HasKey(bc => new { bc.ItemId, bc.ActionId });
+            modelBuilder.Entity<ItemAction>()
+                .HasOne(bc => bc.Item)
+                .WithMany(b => b.Actions)
+                .HasForeignKey(bc => bc.ItemId);
+            modelBuilder.Entity<ItemAction>()
+                .HasOne(bc => bc.Action)
+                .WithMany(c => c.Items)
+                .HasForeignKey(bc => bc.ActionId);
+
+            modelBuilder.Entity<LocationAction>()
+                .HasKey(bc => new { bc.LocationId, bc.ActionId });
+            modelBuilder.Entity<LocationAction>()
+                .HasOne(bc => bc.Location)
+                .WithMany(b => b.Actions)
+                .HasForeignKey(bc => bc.LocationId);
+            modelBuilder.Entity<LocationAction>()
+                .HasOne(bc => bc.Action)
+                .WithMany(c => c.Locations)
+                .HasForeignKey(bc => bc.ActionId);
+
+            modelBuilder.Entity<RaceAction>()
+                .HasKey(bc => new { bc.RaceId, bc.ActionId });
+            modelBuilder.Entity<RaceAction>()
+                .HasOne(bc => bc.Race)
+                .WithMany(b => b.Actions)
+                .HasForeignKey(bc => bc.RaceId);
+            modelBuilder.Entity<RaceAction>()
+                .HasOne(bc => bc.Action)
+                .WithMany(c => c.Races)
+                .HasForeignKey(bc => bc.ActionId);
 
             modelBuilder.Entity<SpecialAbility>(entity =>
             {

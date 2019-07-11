@@ -16,9 +16,7 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public long Value { get; set; }
         public ItemType Type { get; set; }
         public ItemRarity Rarity { get; set; }
-        public DateTimeOffset CreatedOn { get; set; }
-        public DateTimeOffset UpdatedOn { get; set; }
-
         public virtual ICollection<Inventory> PlayerCharacters { get; set; }
+        public virtual ICollection<ItemAction> Actions { get; set; }
     }
 }

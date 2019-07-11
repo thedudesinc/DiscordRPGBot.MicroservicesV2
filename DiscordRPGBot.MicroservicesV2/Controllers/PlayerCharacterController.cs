@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DiscordRPGBot.BusinessLogic.Abstractions.Services;
-using DiscordRPGBot.BusinessLogic.Entities;
 using DiscordRPGBot.BusinessLogic.Models.Request;
 using DiscordRPGBot.BusinessLogic.Models.Response;
 using Microsoft.AspNetCore.Http;

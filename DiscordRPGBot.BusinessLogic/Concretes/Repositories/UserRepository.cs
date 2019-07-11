@@ -79,6 +79,7 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
             if (user != null)
             {
                 user.ActiveCharacter = id;
+                user.UpdatedOn = DateTimeOffset.Now;
 
                 await _context.SaveChangesAsync();
             }
