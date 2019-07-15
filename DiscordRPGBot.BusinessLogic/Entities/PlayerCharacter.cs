@@ -24,9 +24,11 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public long ClassId { get; set; }
         public long RaceId { get; set; }
         public long UserId { get; set; }
+        public long LocationId { get; set; }
         public virtual Class Class { get; set; }
         public virtual Race Race { get; set; }
         public virtual User User { get; set; }
+        public virtual Location Location { get; set; }
         public virtual ICollection<Inventory> Items { get; set; }
     }
 }

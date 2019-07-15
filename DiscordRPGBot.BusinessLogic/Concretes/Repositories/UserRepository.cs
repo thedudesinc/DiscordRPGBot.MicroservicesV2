@@ -149,13 +149,13 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
 
         public async Task<User> GetByDiscordIdAsync(string discordId)
         {
-            return await Task.FromResult(_context.Users
+            return await _context.Users
                 .Include(u => u.Characters)
                    .ThenInclude(characters => characters.Race)
                 .Include(u => u.Characters)
                     .ThenInclude(characters => characters.Class)
                 .Where(p => p.DiscordId.ToLower() == discordId.Trim().ToLower())
-                .FirstOrDefault());
+                .SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<PlayerCharacter>> GetPlayerCharactersByDiscordIdAsync(string discordId)
@@ -180,6 +180,21 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
         public async Task UpdateAsync(long id, User user)
         {
             await Task.FromResult(_context.Users.Update(user));
+        }
+
+        public async Task<PlayerCharacter> GetActivePlayerCharacterByDiscordIdAsync(string discordId)
+        {
+            var user = await _context.Users.Where(a => a.DiscordId == discordId).SingleAsync();
+
+            var pc = await _context.PlayerCharacters
+                .Include(a => a.Class)
+                .Include(a => a.Race)
+                .Include(a => a.Items)
+                .Include(a => a.Location)
+                .Where(a => a.Id == user.ActiveCharacter)
+                .SingleAsync();
+
+            return pc;
         }
     }
 }

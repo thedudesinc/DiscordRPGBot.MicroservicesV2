@@ -6,6 +6,7 @@ namespace DiscordRPGBot.BusinessLogic.Entities
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public bool IsHostile { get; set; }
         public virtual ICollection<LocationAction> Actions { get; set; }
     }

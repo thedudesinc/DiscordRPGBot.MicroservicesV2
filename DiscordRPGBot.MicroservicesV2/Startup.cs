@@ -43,9 +43,13 @@ namespace DiscordRPGBot.MicroservicesV2
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IClassRepository, ClassRepository>();
             services.AddTransient<IRaceRepository, RaceRepository>();
+            services.AddTransient<ILocationActionRepository, LocationActionRepository>();
+            services.AddTransient<IItemActionRepository, ItemActionRepository>();
+            services.AddTransient<IItemRepository, ItemRepository>();
 
             // DI - Services
             services.AddTransient<IPlayerCharacterService, PlayerCharacterService>();
+            services.AddTransient<IActionService, ActionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

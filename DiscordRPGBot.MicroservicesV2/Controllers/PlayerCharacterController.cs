@@ -95,10 +95,10 @@ namespace DiscordRPGBot.MicroservicesV2.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //[HttpPut("{id}")]
+        //public void Put(int id, [FromBody] string value)
+        //{
+        //}
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> Delete(long id)

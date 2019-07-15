@@ -57,6 +57,7 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Services
                 Gold = 10,
                 MaxHP = 10,
                 User = user,
+                LocationId = 1,
                 CreatedOn = DateTimeOffset.Now,
                 UpdatedOn = DateTimeOffset.Now
             };

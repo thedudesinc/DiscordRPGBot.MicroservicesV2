@@ -59,7 +59,10 @@ namespace DiscordRPGBot.BusinessLogic.Concretes.Repositories
                 .Include(p => p.Race)
                 .Include(p => p.Class)
                 .Include(p => p.User)
-                .Where(pc => pc.Id == id).FirstOrDefault());
+                .Include(a => a.Location)
+                    .ThenInclude(a => a.Actions)
+                .Include(a => a.Items)
+                .Where(pc => pc.Id == id).Single());
         }
 
         public async Task<IEnumerable<PlayerCharacter>> GetAsync(IEnumerable<long> ids)

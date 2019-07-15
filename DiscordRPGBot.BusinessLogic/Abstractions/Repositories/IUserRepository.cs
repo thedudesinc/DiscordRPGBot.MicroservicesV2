@@ -16,6 +16,7 @@ namespace DiscordRPGBot.BusinessLogic.Abstractions.Repositories
         Task AddCharacterToUserAsync(long userId, PlayerCharacter pc);
         Task RemoveCharacterFromUserAsync(long userId, PlayerCharacter pc);
         Task<IEnumerable<PlayerCharacter>> GetPlayerCharactersByDiscordIdAsync(string discordId);
+        Task<PlayerCharacter> GetActivePlayerCharacterByDiscordIdAsync(string discordId);
         Task<bool> DeleteAsync(long id);
         Task<bool> DeleteByDiscordIdAsync(string discordId);
     }

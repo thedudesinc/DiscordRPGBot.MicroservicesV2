@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,6 +17,6 @@ namespace DiscordRPGBot.BusinessLogic.Entities
         public int ToughMod { get; set; }
         public string ImageUrl { get; set; }
         public virtual ICollection<PlayerCharacter> PlayerCharacters { get; set; }
-        public virtual ICollection<RaceAction> Actions { get; set; }
+        //public virtual ICollection<Action> Actions { get; set; }
     }
 }
